@@ -10,8 +10,6 @@ import Database from './utils/DB';
 import './styles.less';
 
 import MainView from './views/mainView';
-import EditorView from './views/editorView';
-import ProfileView from './views/profileView';
 import IMXModel from './models/IMXModel';
 import AppModel from './models/appModel';
 import MumbaiModel from './models/MumbaiModel';
@@ -57,12 +55,6 @@ export class App extends React.Component<Props>{
     renderContent() {
         return (
             <Switch>
-                <Route path="/profile">
-                    <ProfileView/>
-                </Route>
-                <Route path="/portfolio/editor">
-                    <EditorView/>
-                </Route>
                 <Route path="/">
                     <MainView/>
                 </Route>
