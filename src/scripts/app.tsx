@@ -10,6 +10,8 @@ import Database from './utils/DB';
 import './styles.less';
 
 import MainView from './views/mainView';
+import GameView from './views/gameView';
+
 import IMXModel from './models/IMXModel';
 import AppModel from './models/appModel';
 import MumbaiModel from './models/MumbaiModel';
@@ -55,6 +57,12 @@ export class App extends React.Component<Props>{
     renderContent() {
         return (
             <Switch>
+                <Route path="/game/1234">
+                    <GameView room="1234"/>
+                </Route>
+                <Route path="/game">
+                    <GameView/>
+                </Route>
                 <Route path="/">
                     <MainView/>
                 </Route>

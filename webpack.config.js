@@ -127,7 +127,7 @@ module.exports = environment => {
     new Dotenv(),
     new WebpackBundleSizeAnalyzerPlugin('./reports/plain-report.txt'),
     new HtmlWebpackPlugin({
-      title: 'Behance',
+      title: 'LDJAM',
       template: path.resolve(__dirname, 'src', 'index.ejs'),
       env: env
     }),

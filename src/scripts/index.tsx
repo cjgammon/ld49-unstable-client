@@ -10,8 +10,6 @@ import App from './app';
 declare global {
     interface Window {
         ethereum?: any;
-        adobeid: any;
-        adobeIMS: any;
         Buffer: any;
     }
 }
