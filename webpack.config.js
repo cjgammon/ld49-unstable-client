@@ -118,7 +118,8 @@ let config = {
 
 module.exports = environment => {
 
-  let env = environment ? environment.name || 'dev' : 'dev';
+  //let env = environment ? environment.name || 'dev' : 'dev';
+  let env = 'dev';
   config.mode = env == 'dev' ? 'development' : 'production';
   //config.mode = 'development'; //NOTE:: production fails??
   console.log('ENV:', env);

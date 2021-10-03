@@ -9,8 +9,8 @@ import Database from './utils/DB';
 
 import './styles.less';
 
-import MainView from './views/mainView';
-import GameView from './views/gameView';
+import MainView from './app/mainView';
+import GameView from './app/gameView';
 
 import IMXModel from './models/IMXModel';
 import AppModel from './models/appModel';

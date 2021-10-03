@@ -1,6 +1,5 @@
 import React from 'react';
 import history from 'scripts/utils/history';
-import styles from './mainView.less';
 
 export default class MainView extends React.Component{
 
@@ -15,7 +14,7 @@ export default class MainView extends React.Component{
 
     render() {
         return (<div>
-            <div className={styles.main}>
+            <div>
                 hello
                 <button onClick={this.handle_singlePlayer_CLICK}>single player</button>
                 <button onClick={this.handle_multiPlayer_CLICK}>multi player</button>
