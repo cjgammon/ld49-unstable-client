@@ -11,7 +11,7 @@ export default class GameCanvas{
     CARDS_THEIRS: Card[] = [];
     CARDS_TABLE: Card[] = [];
 
-    interactive: boolean = true;
+    interactive: boolean = false;
 
     constructor(ctx, w, h) {
         this.ctx = ctx;
@@ -50,7 +50,7 @@ export default class GameCanvas{
 
         let offsetX = (this.CARDS_TABLE.length / 2) * 100;
         let posX = centerX + offsetX;
-        
+
         //draw cards
         playAnim.to(myCard, {
             x: posX, 
@@ -126,19 +126,24 @@ export default class GameCanvas{
     }
 
     draw() {
-        this.ctx.fillStyle = 'black';
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+        let ctx = this.ctx;
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     
-        for (let i = 0; i < this.CARDS_MINE.length; i++) {
-            this.CARDS_MINE[i].draw(this.ctx);
+        const allCards = this.CARDS_TABLE.concat(this.CARDS_THEIRS, this.CARDS_MINE);
+        for (let i = 0; i < allCards.length; i++) {
+            allCards[i].draw(ctx);
         }
 
-        for (let i = 0; i < this.CARDS_THEIRS.length; i++) {
-            this.CARDS_THEIRS[i].draw(this.ctx);
-        }
+        ctx.fillStyle = 'white';
+        ctx.font = '48px serif';
+        ctx.fillText(`${this.CARDS_MINE.length}`, 10, this.height - 100);
 
-        for (let i = 0; i < this.CARDS_TABLE.length; i++) {
-            this.CARDS_TABLE[i].draw(this.ctx);
+        ctx.fillText(`${this.CARDS_THEIRS.length}`, 10, 100);
+
+        if (this.interactive) {
+            ctx.fillText(`click`, this.width / 2, this.height / 2);
         }
     }
 }

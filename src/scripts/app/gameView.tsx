@@ -31,6 +31,10 @@ export default class GameView extends React.Component<Props, State>{
         this.context = this.canvas.getContext('2d');
         this.gameCanvas = new GameCanvas(this.context, this.state.width, this.state.height);
 
+        setTimeout(() => {
+            this.gameCanvas.interactive = true;
+        }, 1000)
+
         requestAnimationFrame(() => this.draw());
     }
 

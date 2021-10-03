@@ -33,7 +33,6 @@ export class App extends React.Component<Props>{
 
         if (params.mode) {
             AppModel.mode = params.mode;
-            document.title += ` | ${AppModel.mode}`;
 
             switch(AppModel.mode) {
                 case 'mumbai':
@@ -42,7 +41,6 @@ export class App extends React.Component<Props>{
             }
         } else {
             AppModel.bcModel = new IMXModel();
-            document.title += ` | IMX`;
         }
     }
 
