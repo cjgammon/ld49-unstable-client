@@ -17,7 +17,7 @@ export default class MainView extends React.Component{
             <div>
                 hello
                 <button onClick={this.handle_singlePlayer_CLICK}>single player</button>
-                <button disabled onClick={this.handle_multiPlayer_CLICK}>multi player</button>
+                <button onClick={this.handle_multiPlayer_CLICK}>multi player</button>
             </div>
         </div>);
     }

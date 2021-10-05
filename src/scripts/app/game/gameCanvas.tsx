@@ -1,5 +1,5 @@
 import gsap from 'gsap/all';
-import Card from './game/card';
+import Card from '../components/card';
 
 export default class GameCanvas{
 

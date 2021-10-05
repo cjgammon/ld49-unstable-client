@@ -1,20 +1,31 @@
 export default class Card{
 
+    id: number;
     value: number;
     x: number;
     y: number;
     side: number = 0;
-    img: HTMLImageElement
+    img: HTMLImageElement;
+    src: string;
     w: number = 200;
     h: number = 300;
 
-    constructor(x?, y?, value?) {
+    constructor(id, x?, y?, value?) {
+        this.id = id;
         this.x = x || 0;
         this.y = y || 0;
         this.value = value || Math.floor(Math.random() * 100);
 
+        this.src = `./assets/images/cards/card${Math.floor(Math.random() * 3)}.png`;
         this.img = new Image();
-        this.img.src = `./assets/images/cards/card${Math.floor(Math.random() * 3)}.png`;
+        this.img.src = this.src;
+    }
+
+    setData(value, src) {
+        this.value = value;
+        this.src = src;
+        this.img = new Image();
+        this.img.src = this.src;
     }
 
     flip() {
