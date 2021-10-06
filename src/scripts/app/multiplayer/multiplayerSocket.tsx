@@ -24,22 +24,18 @@ export default class MultiplayerSocket{
 
         socket = io();
 
-        console.log('room?', room);
-
         socket.on("connect", () => this.handleConnect());
         socket.on("disconnect", () => this.handleDisconnect());
         socket.on("get deck", (e) => this.handleGetDeck());
         socket.on("card played", (card) => this.handleCardPlayed(card));
         socket.on("update players", (e) => this.handleUpdatePlayers(e));
         socket.on("room full", (e) => this.handleRoomFull(e));
-        socket.on("message", (e) => this.handleMessage(e));
         socket.on("evaluated cards", (e) => this.handleEvaluated(e));
         socket.on("receive cards", (cards) => this.handleReceiveCards(cards));
 
-        bus.subscribe(MultiplayerSocket.SET_CARDS, (cards) => this.handleSetCards(cards))
-        bus.subscribe(MultiplayerSocket.PLAY_CARD, (card) => this.handlePlayCard(card))
-        bus.subscribe(MultiplayerSocket.REQUEST_CARDS, () => this.handleRequestCards())
-
+        bus.subscribe(MultiplayerSocket.SET_CARDS, (cards) => this.handleSetCards(cards));
+        bus.subscribe(MultiplayerSocket.PLAY_CARD, (card) => this.handlePlayCard(card));
+        bus.subscribe(MultiplayerSocket.REQUEST_CARDS, () => this.handleRequestCards());
     }
 
     handleConnect() {
@@ -57,7 +53,6 @@ export default class MultiplayerSocket{
     }
 
     handleUpdatePlayers(e) {
-        console.log('players:', e);
         bus.dispatch(MultiplayerSocket.PLAYERS_UPDATE, e);
     }
 
@@ -66,12 +61,10 @@ export default class MultiplayerSocket{
     }
 
     handleRequestCards() {
-        console.log('request cardsb');
         socket.emit('request cards');
     }
 
     handleReceiveCards(cards) {
-        console.log('receive cards2');
         bus.dispatch(MultiplayerSocket.RECEIVE_CARDS, cards);
     }
 
@@ -84,7 +77,6 @@ export default class MultiplayerSocket{
             owner: AppModel.uid
         };
 
-        console.log('play card', cardData);
         socket.emit('play card', cardData);
     }
 
@@ -93,7 +85,6 @@ export default class MultiplayerSocket{
     }
 
     handleEvaluated(result) {
-        console.log('handle evaluated', result);
         bus.dispatch(MultiplayerSocket.EVALUATED, result);
     }
 
@@ -101,11 +92,7 @@ export default class MultiplayerSocket{
         console.log('room full');
     }
 
-    handleMessage(e) {
-        console.log('message', e);
-    }
-
     handleDisconnect() {
-        console.log('disconnect', socket.id); // undefined
+
     }
 }

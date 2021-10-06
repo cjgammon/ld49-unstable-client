@@ -46,7 +46,6 @@ export default class GameCanvas{
     }
 
     handle_RECEIVE_CARDS(cards) {
-        console.log('recieve cards');
         let myCards = [];
         for (let i = 0; i < cards.length; i++) {
             let card = cards[i];
@@ -61,8 +60,6 @@ export default class GameCanvas{
 
     //NOTE:: this is only used for their cards..
     handle_PLAYERS_UPDATE(players) {
-        console.log('players update', players);
-
         if (this.gameState === 'waiting' && players.length > 1) {
             this.interactive = true;
             this.gameState = 'playing';
@@ -147,34 +144,6 @@ export default class GameCanvas{
         }, 0);
     }
 
-    /*
-    evaluateCard() {
-        let myIndex = this.CARDS_MINE.length - 1;
-        let theirIndex = this.CARDS_THEIRS.length - 1;
-        const myCard = this.CARDS_MINE[myIndex];
-        const theirCard = this.CARDS_THEIRS[theirIndex];
-
-        let myCardWin;
-        if (myCard.value > theirCard.value) {
-            myCardWin = true;
-        } else if (myCard.value < theirCard.value) {
-            myCardWin = false;
-        }
-
-        let cardA = this.CARDS_MINE.splice(myIndex, 1);
-        let cardB = this.CARDS_THEIRS.splice(theirIndex, 1);
-        this.CARDS_TABLE = this.CARDS_TABLE.concat(cardA, cardB);
-
-        if (myCard.value === theirCard.value) {
-            this.playMyCard();
-            return;
-        }
-
-        this.collectCard(myCardWin);
-    }
-
-    */
-
     collectCard(myCardWin) {
         this.ties = 0;
 
@@ -189,13 +158,9 @@ export default class GameCanvas{
 
         let collectAnim = gsap.timeline({
             onComplete: () => {
-                //request updated decks...
-                console.log('request cards1');
                 bus.dispatch(MultiplayerSocket.REQUEST_CARDS);
             }
         });
-
-        console.log('mycardwin?', myCardWin);
 
         let winnerY = myCardWin ? this.height - 100 : -200;
         collectAnim.to(cards, {
@@ -206,7 +171,7 @@ export default class GameCanvas{
         });
 
         collectAnim.call(() => {
-            cards.forEach((card: Card, index: number) => {
+            cards.forEach((card: Card) => {
                 card.flip();
                 if (myCardWin) {
                     this.CARDS_MINE.unshift(card);
