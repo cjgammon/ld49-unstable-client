@@ -56,9 +56,7 @@ export class App extends React.Component<Props>{
     renderContent() {
         return (
             <Switch>
-                <Route path="/game/1234">
-                    <MultiplayerView room="1234"/>
-                </Route>
+                <Route path="/game/:room" component={MultiplayerView}></Route>
                 <Route path="/game">
                     <GameView/>
                 </Route>

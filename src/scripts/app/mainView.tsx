@@ -9,7 +9,8 @@ export default class MainView extends React.Component{
     }
 
     handle_multiPlayer_CLICK() {
-        history.push('/game/1234');
+        let roomId = Date.now();
+        history.push(`/game/${roomId}`);
     }
 
     render() {

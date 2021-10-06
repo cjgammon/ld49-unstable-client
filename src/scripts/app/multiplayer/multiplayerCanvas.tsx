@@ -29,7 +29,7 @@ export default class GameCanvas{
         this.height = h;
 
         bus.subscribe(MultiplayerSocket.PLAYERS_UPDATE, (e) => this.handle_PLAYERS_UPDATE(e))
-        bus.subscribe(MultiplayerSocket.GET_DECK, (e) => this.handle_GET_DECK())
+        bus.subscribe(MultiplayerSocket.GET_DECK, () => this.handle_GET_DECK())
         bus.subscribe(MultiplayerSocket.RECEIVE_CARDS, (cards) => this.handle_RECEIVE_CARDS(cards))
         bus.subscribe(MultiplayerSocket.PLAY_THEIR_CARD, (card) => this.handle_PLAY_THEIR_CARD(card))
         bus.subscribe(MultiplayerSocket.EVALUATED, (card) => this.handle_EVALUATED(card))
@@ -46,6 +46,7 @@ export default class GameCanvas{
     }
 
     handle_RECEIVE_CARDS(cards) {
+        console.log('recieve cards');
         let myCards = [];
         for (let i = 0; i < cards.length; i++) {
             let card = cards[i];
