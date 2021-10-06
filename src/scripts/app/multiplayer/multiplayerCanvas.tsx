@@ -57,7 +57,7 @@ export default class GameCanvas{
         this.interactive = true;
     }
 
-    //NOTE:: this is only used for player cards..
+    //NOTE:: this is only used for their cards..
     handle_PLAYERS_UPDATE(players) {
         console.log('players update', players);
 
