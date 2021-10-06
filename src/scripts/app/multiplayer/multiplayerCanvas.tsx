@@ -54,6 +54,8 @@ export default class GameCanvas{
         }
         this.CARDS_MINE = myCards;
 
+        //TODO:: handle no cards.
+
         this.interactive = true;
     }
 
@@ -75,6 +77,8 @@ export default class GameCanvas{
                 }
             }
         }
+
+        //TODO:: handle no cards...
     }
 
     handle_EVALUATED(result) {
