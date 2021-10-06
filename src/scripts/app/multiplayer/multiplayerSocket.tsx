@@ -7,11 +7,15 @@ let socket: Socket
 export default class MultiplayerSocket{
 
     static CONNECT: string = 'onConnect';
+    static GET_DECK: string = 'onGetDeck'; // generage/get initial deck on client
     static REQUEST_CARDS: string = 'onRequestCards';
+    static RECEIVE_CARDS: string = 'onRecieveCards';
+    static UPDATE_CARDS: string = 'onUpdateCards';
     static SET_CARDS: string = 'onSetCards';
     static PLAYERS_UPDATE: string = 'onPlayersUpdate';
     static PLAY_CARD: string = 'onPlayCard';
     static PLAY_THEIR_CARD: string = 'onPlayTheirCard';
+    static EVALUATED: string = 'onEvaluated';
 
     room: string;
 
@@ -24,14 +28,17 @@ export default class MultiplayerSocket{
 
         socket.on("connect", () => this.handleConnect());
         socket.on("disconnect", () => this.handleDisconnect());
-        socket.on("request cards", (e) => this.handleRequestCards());
+        socket.on("get deck", (e) => this.handleGetDeck());
         socket.on("card played", (card) => this.handleCardPlayed(card));
         socket.on("update players", (e) => this.handleUpdatePlayers(e));
         socket.on("room full", (e) => this.handleRoomFull(e));
         socket.on("message", (e) => this.handleMessage(e));
+        socket.on("evaluated cards", (e) => this.handleEvaluated(e));
+        socket.on("receive cards", (cards) => this.handleReceiveCards(cards));
 
         bus.subscribe(MultiplayerSocket.SET_CARDS, (cards) => this.handleSetCards(cards))
         bus.subscribe(MultiplayerSocket.PLAY_CARD, (card) => this.handlePlayCard(card))
+        bus.subscribe(MultiplayerSocket.REQUEST_CARDS, () => this.handleRequestCards())
 
     }
 
@@ -45,8 +52,8 @@ export default class MultiplayerSocket{
         bus.dispatch(MultiplayerSocket.CONNECT, {id: socket.id, room: this.room});
     }
 
-    handleRequestCards() {
-        bus.dispatch(MultiplayerSocket.REQUEST_CARDS);
+    handleGetDeck() {
+        bus.dispatch(MultiplayerSocket.GET_DECK);
     }
 
     handleUpdatePlayers(e) {
@@ -56,6 +63,16 @@ export default class MultiplayerSocket{
 
     handleSetCards(cards) {
         socket.emit('set cards', cards);
+    }
+
+    handleRequestCards() {
+        console.log('request cardsb');
+        socket.emit('request cards');
+    }
+
+    handleReceiveCards(cards) {
+        console.log('receive cards2');
+        bus.dispatch(MultiplayerSocket.RECEIVE_CARDS, cards);
     }
 
     handlePlayCard(card) {
@@ -73,6 +90,11 @@ export default class MultiplayerSocket{
 
     handleCardPlayed(card) {
         bus.dispatch(MultiplayerSocket.PLAY_THEIR_CARD, card);
+    }
+
+    handleEvaluated(result) {
+        console.log('handle evaluated', result);
+        bus.dispatch(MultiplayerSocket.EVALUATED, result);
     }
 
     handleRoomFull(e) {

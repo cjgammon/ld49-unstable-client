@@ -12,12 +12,12 @@ export default class GameCanvas{
     width: number;
     height: number;
 
-    myid: string = '';
-    theirid: string = '';
+    //myid: string = '';
+    //theirid: string = '';
 
     CARDS_MINE: Card[] = [];
     CARDS_THEIRS: Card[] = [];
-    CARDS_TABLE: Card[] = [];
+    ties: number = 0;
 
     gameState = 'waiting';
 
@@ -29,22 +29,34 @@ export default class GameCanvas{
         this.height = h;
 
         bus.subscribe(MultiplayerSocket.PLAYERS_UPDATE, (e) => this.handle_PLAYERS_UPDATE(e))
-        bus.subscribe(MultiplayerSocket.REQUEST_CARDS, (e) => this.handle_REQUEST_CARDS())
+        bus.subscribe(MultiplayerSocket.GET_DECK, (e) => this.handle_GET_DECK())
+        bus.subscribe(MultiplayerSocket.RECEIVE_CARDS, (cards) => this.handle_RECEIVE_CARDS(cards))
         bus.subscribe(MultiplayerSocket.PLAY_THEIR_CARD, (card) => this.handle_PLAY_THEIR_CARD(card))
+        bus.subscribe(MultiplayerSocket.EVALUATED, (card) => this.handle_EVALUATED(card))
 
         window.addEventListener('click', (e) => this.handle_CLICK(e));
     }
 
-    handle_REQUEST_CARDS() {
-        console.log('request cards2');
+    handle_GET_DECK() {
         this.CARDS_MINE = [];
         for (let i = 0; i < 100; i++) {
             this.CARDS_MINE.push(new Card(i, this.width / 2, this.height - 100));
         }
-
         bus.dispatch(MultiplayerSocket.SET_CARDS, this.CARDS_MINE);
     }
 
+    handle_RECEIVE_CARDS(cards) {
+        let myCards = [];
+        for (let i = 0; i < cards.length; i++) {
+            let card = cards[i];
+            myCards.push(new Card(card.id, this.width / 2, this.height - 100, card.value, card.src));
+        }
+        this.CARDS_MINE = myCards;
+
+        this.interactive = true;
+    }
+
+    //NOTE:: this is only used for player cards..
     handle_PLAYERS_UPDATE(players) {
         console.log('players update', players);
 
@@ -58,9 +70,17 @@ export default class GameCanvas{
             if (player.id !== AppModel.uid) {
                 this.CARDS_THEIRS = [];
                 for (let i = 0; i < player.cardCount; i++) {
-                    this.CARDS_THEIRS.push(new Card(i, this.width / 2, 0));
+                    this.CARDS_THEIRS.push(new Card(i, this.width / 2, -200));
                 }
             }
+        }
+    }
+
+    handle_EVALUATED(result) {
+        if (result === 'tie') {
+            this.playMyCard();
+        } else {
+            this.collectCard(result === AppModel.uid);
         }
     }
 
@@ -73,8 +93,6 @@ export default class GameCanvas{
 
     playMyCard() {
 
-        console.log('playMyCard');
-
         let myIndex = this.CARDS_MINE.length - 1;
         const myCard = this.CARDS_MINE[myIndex];
 
@@ -83,7 +101,7 @@ export default class GameCanvas{
 
         let playAnim = gsap.timeline();
 
-        let offsetX = (this.CARDS_TABLE.length / 2) * 100;
+        let offsetX = this.ties * 100;
         let posX = centerX + offsetX;
 
         //draw cards
@@ -96,8 +114,6 @@ export default class GameCanvas{
             }
         }, 0);
 
-
-        //send event to server...
         bus.dispatch(MultiplayerSocket.PLAY_CARD, myCard);
     }
 
@@ -106,7 +122,6 @@ export default class GameCanvas{
         let theirIndex = this.CARDS_THEIRS.length - 1;
         const theirCard = this.CARDS_THEIRS[theirIndex];
 
-        console.log('play their card', card);
         theirCard.setData(card.value, card.src);
 
         const centerX = this.width / 2;
@@ -114,7 +129,7 @@ export default class GameCanvas{
 
         let playAnim = gsap.timeline();
 
-        let offsetX = (this.CARDS_TABLE.length / 2) * 100;
+        let offsetX = this.ties * 100;
         let posX = centerX + offsetX;
 
         playAnim.to(theirCard, {
@@ -126,7 +141,7 @@ export default class GameCanvas{
             }
         }, 0);
     }
-    
+
     /*
     evaluateCard() {
         let myIndex = this.CARDS_MINE.length - 1;
@@ -153,24 +168,40 @@ export default class GameCanvas{
         this.collectCard(myCardWin);
     }
 
+    */
+
     collectCard(myCardWin) {
+        this.ties = 0;
+
+        let myIndex = this.CARDS_MINE.length - 1;
+        const myCard = this.CARDS_MINE[myIndex];
+        let theirIndex = this.CARDS_THEIRS.length - 1;
+        const theirCard = this.CARDS_THEIRS[theirIndex];
+
+        let cards = [myCard, theirCard];
+
         const centerX = this.width / 2;
 
-        let collectAnim = gsap.timeline({onComplete: () => {
-            this.interactive = true;
-        }});
+        let collectAnim = gsap.timeline({
+            onComplete: () => {
+                //request updated decks...
+                console.log('request cards1');
+                bus.dispatch(MultiplayerSocket.REQUEST_CARDS);
+            }
+        });
 
-        let winnerY = myCardWin ? this.height - 150 : -150;
-        collectAnim.to(this.CARDS_TABLE, {
+        console.log('mycardwin?', myCardWin);
+
+        let winnerY = myCardWin ? this.height - 100 : -200;
+        collectAnim.to(cards, {
             x: centerX, 
             y: winnerY, 
             duration: 0.4,
             stagger: 0.1
         });
 
-        
         collectAnim.call(() => {
-            this.CARDS_TABLE.forEach((card: Card, index: number) => {
+            cards.forEach((card: Card, index: number) => {
                 card.flip();
                 if (myCardWin) {
                     this.CARDS_MINE.unshift(card);
@@ -179,10 +210,9 @@ export default class GameCanvas{
                 }
             });
 
-            this.CARDS_TABLE = [];
+            cards = [];
         }, [], '+=1');
     }
-    */
 
     draw() {
         let ctx = this.ctx;
@@ -190,7 +220,7 @@ export default class GameCanvas{
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     
-        const allCards = this.CARDS_TABLE.concat(this.CARDS_THEIRS, this.CARDS_MINE);
+        const allCards = this.CARDS_THEIRS.concat(this.CARDS_MINE);
         for (let i = 0; i < allCards.length; i++) {
             allCards[i].draw(ctx);
         }

@@ -10,13 +10,13 @@ export default class Card{
     w: number = 200;
     h: number = 300;
 
-    constructor(id, x?, y?, value?) {
+    constructor(id, x?, y?, value?, src?) {
         this.id = id;
         this.x = x || 0;
         this.y = y || 0;
         this.value = value || Math.floor(Math.random() * 100);
 
-        this.src = `./assets/images/cards/card${Math.floor(Math.random() * 3)}.png`;
+        this.src = src || `./assets/images/cards/card${Math.floor(Math.random() * 3)}.png`;
         this.img = new Image();
         this.img.src = this.src;
     }
