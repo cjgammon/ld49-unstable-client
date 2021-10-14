@@ -20,9 +20,12 @@ export default class GameCanvas{
 
         let centerX = this.width / 2;
 
+        let id = 0;
         for (let i = 0; i < 100; i++) {
-            this.CARDS_MINE.push(new Card(centerX + i, this.height - 150));
-            this.CARDS_THEIRS.push(new Card(centerX + i, -150));
+            this.CARDS_MINE.push(new Card(id, centerX + i, this.height - 150));
+            id++;
+            this.CARDS_THEIRS.push(new Card(id, centerX + i, -150));
+            id++;
         }
 
         window.addEventListener('click', (e) => this.handle_CLICK(e));
